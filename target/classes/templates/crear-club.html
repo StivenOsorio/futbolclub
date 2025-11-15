@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Club - Futbol Club</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+        
+        .form-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            background: white;
+        }
+        
+        .form-group select:focus {
+            outline: none;
+            border-color: #e74c3c;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-header">
+            <h1>🛡️ Nuevo Club</h1>
+            <p>Crea un club y establece sus relaciones JPA</p>
+        </div>
+        
+        <div class="info-box">
+            <strong>💡 Relaciones JPA:</strong> Un club puede tener UN entrenador (@OneToOne) y pertenecer a UNA asociación (@ManyToOne). Los jugadores se asignarán después.
+        </div>
+        
+        <form action="/crear-club" method="post">
+            <div class="form-group">
+                <label for="entrenadorId">Entrenador (@OneToOne):</label>
+                <select id="entrenadorId" name="entrenadorId">
+                    <option value="">Selecciona un entrenador (opcional)</option>
+                    <option th:each="entrenador : ${entrenadores}" 
+                            th:value="${entrenador.id}" 
+                            th:text="${entrenador.nombre + ' ' + entrenador.apellido + ' (' + entrenador.nacionalidad + ')'}">
+                    </option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="asociacionId">Asociación (@ManyToOne):</label>
+                <select id="asociacionId" name="asociacionId">
+                    <option value="">Selecciona una asociación (opcional)</option>
+                    <option th:each="asociacion : ${asociaciones}" 
+                            th:value="${asociacion.id}" 
+                            th:text="${asociacion.nombre + ' (' + asociacion.pais + ')'}">
+                    </option>
+                </select>
+            </div>
+            
+            <div th:if="${entrenadores.empty and asociaciones.empty}" class="info-box" style="border-color: #ffc107; background-color: #fff3cd;">
+                <strong>⚠️ Aviso:</strong> No hay entrenadores ni asociaciones disponibles. Considera crearlos primero para establecer las relaciones JPA.
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">✅ Crear Club</button>
+                <a href="/demo" class="btn btn-secondary">❌ Cancelar</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

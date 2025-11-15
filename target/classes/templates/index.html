@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futbol Club - Sistema JPA</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .menu-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .menu-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .features {
+            margin-top: 60px;
+            text-align: center;
+        }
+        
+        .features-list {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .feature {
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+        }
+        
+        .feature strong {
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚽ Futbol Club</h1>
+            <p>Sistema de Gestión con Relaciones JPA - Spring Boot</p>
+        </div>
+        
+        <div class="menu-grid">
+            <div class="menu-card">
+                <h3>🎯 Demo Interactivo</h3>
+                <p>Explora todas las relaciones JPA funcionando</p>
+                <a href="/demo" class="btn">Ver Demo</a>
+            </div>
+            
+            <div class="menu-card">
+                <h3>🗄️ Base de Datos</h3>
+                <p>Accede al console H2 para consultas avanzadas</p>
+                <a href="/h2-console" class="btn" target="_blank">H2 Console</a>
+            </div>
+            
+            <div class="menu-card">
+                <h3>📋 API REST</h3>
+                <p>Endpoints JSON para desarrolladores</p>
+                <a href="/api/clubes" class="btn" target="_blank">Ver API</a>
+            </div>
+        </div>
+        
+        <div class="features">
+            <h2>🚀 Relaciones JPA Implementadas</h2>
+            <div class="features-list">
+                <div class="feature">
+                    <strong>@OneToOne</strong><br>
+                    Club ↔ Entrenador
+                </div>
+                <div class="feature">
+                    <strong>@OneToMany</strong><br>
+                    Club → Jugadores
+                </div>
+                <div class="feature">
+                    <strong>@ManyToOne</strong><br>
+                    Club → Asociación
+                </div>
+                <div class="feature">
+                    <strong>@ManyToMany</strong><br>
+                    Club ↔ Competiciones
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

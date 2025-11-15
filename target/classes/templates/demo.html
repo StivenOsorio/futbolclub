@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo JPA - Futbol Club</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .header p { opacity: 0.9; }
+        
+        .controls {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #dee2e6;
+            text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-info { background: #17a2b8; color: white; }
+        
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        
+        .stats {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .stat-item h3 { font-size: 2rem; }
+        .stat-item p { opacity: 0.9; }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .demo-info {
+            background: #e8f4fd;
+            border: 1px solid #bee5eb;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 15px 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .card-header.clubes { background: #e74c3c; }
+        .card-header.jugadores { background: #2ecc71; }
+        .card-header.entrenadores { background: #3498db; }
+        .card-header.asociaciones { background: #9b59b6; }
+        
+        .card-body {
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .item {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        
+        .item h4 { color: #2c3e50; margin-bottom: 8px; }
+        .item p { color: #7f8c8d; margin: 3px 0; font-size: 0.9rem; }
+        
+        .relation { color: #e67e22; font-weight: bold; }
+        .empty { text-align: center; color: #95a5a6; padding: 40px; }
+        
+        .section-title {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 20px 0 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚽ Demo JPA - Relaciones en Acción</h1>
+            <p>Visualiza y crea datos con las 4 relaciones JPA</p>
+        </div>
+        
+        <div class="controls">
+            <!-- Acciones rápidas -->
+            <a href="/crear-datos-simple" class="btn btn-success">🔄 Datos de Prueba</a>
+            <a href="/limpiar-simple" class="btn btn-danger">🗑️ Limpiar Todo</a>
+            
+            <!-- Crear datos personalizados -->
+            <a href="/crear-asociacion" class="btn btn-primary">➕ Nueva Asociación</a>
+            <a href="/crear-entrenador" class="btn btn-primary">➕ Nuevo Entrenador</a>
+            <a href="/crear-club" class="btn btn-primary">➕ Nuevo Club</a>
+            <a href="/crear-jugador" class="btn btn-primary">➕ Nuevo Jugador</a>
+            
+            <!-- Enlaces útiles -->
+            <a href="/h2-console" class="btn btn-warning" target="_blank">🗄️ H2 Console</a>
+            <a href="/" class="btn btn-info">🏠 Inicio</a>
+        </div>
+        
+        <div class="stats">
+            <h3>📊 Estadísticas Actuales</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3 th:text="${clubes != null ? clubes.size() : 0}">0</h3>
+                    <p>Clubes</p>
+                </div>
+                <div class="stat-item">
+                    <h3 th:text="${jugadores != null ? jugadores.size() : 0}">0</h3>
+                    <p>Jugadores</p>
+                </div>
+                <div class="stat-item">
+                    <h3 th:text="${entrenadores != null ? entrenadores.size() : 0}">0</h3>
+                    <p>Entrenadores</p>
+                </div>
+                <div class="stat-item">
+                    <h3 th:text="${asociaciones != null ? asociaciones.size() : 0}">0</h3>
+                    <p>Asociaciones</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div th:if="${clubes == null or clubes.empty}" class="demo-info">
+                <h3>🚀 ¡Bienvenido al Demo de Relaciones JPA!</h3>
+                <p><strong>Opciones disponibles:</strong></p>
+                <p>🔄 <strong>Datos de Prueba:</strong> Crea datos automáticamente para ver las relaciones</p>
+                <p>➕ <strong>Crear Manualmente:</strong> Usa los botones para crear tus propios datos paso a paso</p>
+                <br>
+                <p><em>Recomendación: Empieza creando una Asociación y un Entrenador, luego crea un Club que los relacione.</em></p>
+            </div>
+            
+            <div th:if="${clubes != null and !clubes.empty}" class="grid">
+                <!-- CLUBES -->
+                <div class="card">
+                    <div class="card-header clubes">🛡️ CLUBES (@OneToOne + @ManyToOne)</div>
+                    <div class="card-body">
+                        <div th:each="club : ${clubes}" class="item">
+                            <h4>Club ID: <span th:text="${club.id}"></span></h4>
+                            <p class="relation">👔 @OneToOne Entrenador: 
+                                <span th:text="${club.entrenador != null ? club.entrenador.nombre + ' ' + club.entrenador.apellido : 'Sin entrenador'}"></span>
+                            </p>
+                            <p class="relation">🏢 @ManyToOne Asociación: 
+                                <span th:text="${club.asociacion != null ? club.asociacion.nombre : 'Sin asociación'}"></span>
+                            </p>
+                            <p class="relation">👥 @OneToMany Jugadores: 
+                                <span th:text="${club.jugadores != null ? club.jugadores.size() : 0}"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- JUGADORES -->
+                <div class="card">
+                    <div class="card-header jugadores">🏃 JUGADORES (@ManyToOne)</div>
+                    <div class="card-body">
+                        <div th:if="${jugadores.empty}" class="empty">No hay jugadores</div>
+                        <div th:each="jugador : ${jugadores}" class="item">
+                            <h4 th:text="${jugador.nombre + ' ' + jugador.apellido}"></h4>
+                            <p>Posición: <span th:text="${jugador.posicion}"></span></p>
+                            <p>Número: <span th:text="${jugador.numeroCamiseta}"></span></p>
+                            <p class="relation">🛡️ @ManyToOne Club: 
+                                <span th:text="${jugador.club != null ? 'Club ID ' + jugador.club.id : 'Sin club'}"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ENTRENADORES -->
+                <div class="card">
+                    <div class="card-header entrenadores">👔 ENTRENADORES (@OneToOne)</div>
+                    <div class="card-body">
+                        <div th:each="entrenador : ${entrenadores}" class="item">
+                            <h4 th:text="${entrenador.nombre + ' ' + entrenador.apellido}"></h4>
+                            <p>Nacionalidad: <span th:text="${entrenador.nacionalidad}"></span></p>
+                            <p>Experiencia: <span th:text="${entrenador.añosExperiencia}"></span> años</p>
+                            <p class="relation">🛡️ @OneToOne Club: 
+                                <span th:text="${entrenador.club != null ? 'Club ID ' + entrenador.club.id : 'Disponible'}"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ASOCIACIONES -->
+                <div class="card">
+                    <div class="card-header asociaciones">🏢 ASOCIACIONES (@OneToMany)</div>
+                    <div class="card-body">
+                        <div th:each="asociacion : ${asociaciones}" class="item">
+                            <h4 th:text="${asociacion.nombre}"></h4>
+                            <p>País: <span th:text="${asociacion.pais}"></span></p>
+                            <p>Presidente: <span th:text="${asociacion.presidente}"></span></p>
+                            <p class="relation">🛡️ @OneToMany Clubes afiliados: Ver sección Clubes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
